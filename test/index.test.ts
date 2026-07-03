@@ -127,6 +127,18 @@ describe('listData function', () => {
     (globalThis as any).window = originalWindow;
   });
 
+  it('encodes Solana attestations without global Buffer', () => {
+    const originalBuffer = (globalThis as any).Buffer;
+    try {
+      (globalThis as any).Buffer = undefined;
+      expect(encodeAttestation(createSolanaAttestation())).toBe(
+        '0x701ec4df574eb124785ca69e307febde87f1d9150b2f60634af19cc0035fa458'
+      );
+    } finally {
+      (globalThis as any).Buffer = originalBuffer;
+    }
+  });
+
   function createNetworkRequest() {
     const attReq: AttNetworkRequest = {
       url: "https://example.com/apiwdewd/121s1qs1qs?DDDSADWDDAWDWAWWAWW",

@@ -16,7 +16,7 @@ import type {
   InitOptions,
   GenerateRequestParamsOptions
 } from './types.js';
-import { ErrorCodeMAP, ZkAttestationError } from './error.js';
+import { ErrorCodeMAP, stringifyAlgorithmReportData, ZkAttestationError } from './error.js';
 import type { ErrorCode } from './error.js';
 import { AttRequest } from './classes/AttRequest.js';
 import { encodeAttestation, sendRequest, isSolanaAddress } from './utils.js';
@@ -375,7 +375,7 @@ class PrimusZKTLS {
           }
           const { code, data, details } = readErrorPayload(errorData);
           const reportCode = buildEventReportCode(code, details?.subCode);
-          reportFailure(reportCode, '', { getAttestationRes: JSON.stringify(errorData?.data) });
+          reportFailure(reportCode, '', { getAttestationRes: stringifyAlgorithmReportData(errorData?.data) });
           settleReject(new ZkAttestationError(code, '', data, details))
         }
         const handleStartAttestationRes = (params: StartAttestationResParams) => {
@@ -423,7 +423,7 @@ class PrimusZKTLS {
           }
           const { code, data: errorPayload, details } = readErrorPayload(errorData);
           const reportCode = buildEventReportCode(code, details?.subCode);
-          reportFailure(reportCode, '', { getAttestationResultRes: JSON.stringify(errorData?.data) });
+          reportFailure(reportCode, '', { getAttestationResultRes: stringifyAlgorithmReportData(errorData?.data) });
           settleReject(new ZkAttestationError(code, '', errorPayload, details))
         }
         const eventListener = (event: MessageEvent) => {

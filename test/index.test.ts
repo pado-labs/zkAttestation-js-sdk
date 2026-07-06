@@ -1,7 +1,7 @@
 import { encodeRequest, encodeResponse, encodeAttestation } from '../src/utils';
 import type { Attestation, AttNetworkRequest, AttNetworkResponseResolve } from '../src/types';
 import { PrimusZKTLS } from '../src/index';
-import { ZkAttestationError } from '../src/error';
+import { stringifyAlgorithmReportData, ZkAttestationError } from '../src/error';
 import { ethers } from "ethers";
 
 describe('listData function', () => {
@@ -137,6 +137,14 @@ describe('listData function', () => {
     } finally {
       (globalThis as any).Buffer = originalBuffer;
     }
+  });
+
+  it('serializes extension algorithm report data from legacy string or object payloads', () => {
+    const payload = { retcode: '2', content: 'failed', details: { subCode: '507' } };
+
+    expect(stringifyAlgorithmReportData(JSON.stringify(payload))).toBe(JSON.stringify(payload));
+    expect(stringifyAlgorithmReportData(payload)).toBe(JSON.stringify(payload));
+    expect(stringifyAlgorithmReportData('plain-error')).toBe('plain-error');
   });
 
   function createNetworkRequest() {

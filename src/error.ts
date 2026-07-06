@@ -174,6 +174,29 @@ function resolveZkAttestationErrorMessage(
   return errorCodeLookup[code];
 }
 
+/** Serialize extension algorithm payloads without double-stringifying legacy JSON strings. */
+export function stringifyAlgorithmReportData(data: unknown): string {
+  if (data === undefined || data === null) {
+    return '';
+  }
+  if (typeof data === 'string') {
+    const trimmed = data.trim();
+    if (!trimmed) {
+      return '';
+    }
+    try {
+      return JSON.stringify(JSON.parse(trimmed));
+    } catch {
+      return data;
+    }
+  }
+  try {
+    return JSON.stringify(data) ?? '';
+  } catch {
+    return String(data);
+  }
+}
+
 /** Wire-format `data` field: always a string; omit nested `details` (subCode is top-level). */
 function dataForJsonExport(stored: unknown): string {
   if (stored === undefined || stored === null) {
